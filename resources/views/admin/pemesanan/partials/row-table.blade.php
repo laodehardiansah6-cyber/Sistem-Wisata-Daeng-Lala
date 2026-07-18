@@ -35,7 +35,7 @@
     <td class="py-4 px-4 text-center">
         @if($pesanan->bukti_transfer)
             <a href="{{ asset($pesanan->bukti_transfer) }}" target="_blank" class="inline-flex items-center px-2.5 py-1.5 bg-gray-100 border border-gray-300 text-xs font-bold text-gray-700 rounded shadow-sm hover:bg-gray-200 transition">
-                👁️ Cek Foto
+                👁️ Cek Foto Transfer
             </a>
         @else
             <span class="text-xs text-gray-400">Tidak ada</span>
