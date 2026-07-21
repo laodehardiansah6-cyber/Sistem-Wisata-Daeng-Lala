@@ -8,6 +8,9 @@ use App\Http\Controllers\KulinerController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\UlasanController as AdminUlasanController;
+use App\Http\Controllers\Admin\PromoController;
+use App\Http\Controllers\Admin\GaleriController;
+use App\Http\Controllers\FaqController; 
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -29,11 +32,22 @@ Route::middleware(['auth'])->group(function () {
     })->name('dashboard');
     // -----------------------------------------------------------------
     
-    // Rute Pengunjung
+    // Rute Pengunjung (User)
     Route::get('/katalog-fasilitas', [FrontController::class, 'fasilitas'])->name('user.fasilitas');
     Route::get('/katalog-kuliner', [FrontController::class, 'kuliner'])->name('user.kuliner');
+    
+    // --- TAMBAHAN RUTE PENGUNJUNG (PROMO, GALERI & FAQ) ---
+    Route::get('/promo', [FrontController::class, 'promo'])->name('user.promo');
+    Route::get('/galeri', [FrontController::class, 'galeri'])->name('user.galeri');
+    
+    Route::get('/faq', [FrontController::class, 'faqUser'])->name('user.faq'); // <-- Rute Lihat FAQ User
+    Route::post('/faq', [FrontController::class, 'storeFaqUser'])->name('user.faq.store'); // <-- Rute Kirim Pertanyaan Baru
+    
     Route::get('/booking', [FrontController::class, 'booking'])->name('user.booking');
     Route::post('/booking', [FrontController::class, 'storeBooking'])->name('user.booking.store');
+    
+    // --- TAMBAHAN RUTE API CEK PROMO ---
+    Route::post('/cek-promo', [FrontController::class, 'cekPromo'])->name('cek.promo');
     
     // Rute Simpan Ulasan/Rating
     Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
@@ -56,15 +70,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/pemesanan', [PemesananController::class, 'index'])->name('admin.pemesanan');
         Route::patch('/admin/pemesanan/{id}/status', [PemesananController::class, 'updateStatus'])->name('admin.pemesanan.status');
         
-        // --- TAMBAHAN RUTE RIWAYAT TRANSAKSI ADMIN ---
+        // Rute Riwayat Transaksi Admin
         Route::get('/admin/riwayat-transaksi', [PemesananController::class, 'riwayat'])->name('admin.pemesanan.riwayat');
         
         // Rute Ulasan Admin
         Route::get('/admin/ulasan', [AdminUlasanController::class, 'index'])->name('admin.ulasan.index');
         Route::delete('/admin/ulasan/{id}', [AdminUlasanController::class, 'destroy'])->name('admin.ulasan.destroy');
         
+        // CRUD Fasilitas & Kuliner
         Route::resource('/admin/fasilitas', FasilitasController::class);
         Route::resource('/admin/kuliner', KulinerController::class);
+
+        // --- TAMBAHAN RUTE ADMIN (PROMO, GALERI, FAQ) ---
+        Route::resource('/admin/promo', PromoController::class);
+        Route::resource('/admin/galeri', GaleriController::class);
+        Route::resource('/admin/faq', FaqController::class); // <-- Rute FAQ Admin
 
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
         Route::patch('/admin/users/{user}/update-role', [UserController::class, 'updateRole'])->name('admin.users.update');
