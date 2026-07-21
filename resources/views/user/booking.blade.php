@@ -25,7 +25,7 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
 
             <!-- ============================== -->
-            <!-- RINGKASAN ITEM YANG DIPESAN     -->
+            <!-- RINGKASAN ITEM YANG DIPESAN    -->
             <!-- ============================== -->
             <div class="bg-white rounded-2xl shadow-lg border border-cyan-100 p-5 mb-6 flex items-center gap-4">
                 <div class="w-14 h-14 flex-shrink-0 rounded-xl bg-gradient-to-br from-cyan-100 to-sky-200 flex items-center justify-center text-cyan-600">
@@ -72,11 +72,11 @@
             </div>
 
             <!-- ============================== -->
-            <!-- FORM PESANAN                   -->
+            <!-- FORM PESANAN & KODE PROMO      -->
             <!-- ============================== -->
             <div class="bg-white rounded-2xl shadow-sm border border-cyan-100 p-6 sm:p-8">
                 <h3 class="text-gray-800 font-bold mb-6 flex items-center gap-2">
-                    <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <svg class="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Detail Pesanan
                 </h3>
 
@@ -85,19 +85,39 @@
 
                     <input type="hidden" name="jenis" value="{{ request('jenis') }}">
                     <input type="hidden" name="item_nama" value="{{ request('item_nama') }}">
-                    <input type="hidden" id="harga_satuan" value="{{ request('harga', 0) }}">
-                    <input type="hidden" id="input_total_harga" name="total_harga" value="{{ request('harga', 0) }}">
+                    <input type="hidden" id="total_harga_input" name="total_harga" value="{{ request('harga', 0) }}">
+                    <!-- INPUT HIDDEN UNTUK MENGIRIM KODE PROMO KE DATABASE -->
+                    <input type="hidden" id="kode_promo_dipakai" name="kode_promo_dipakai" value="">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Jumlah</label>
-                            <input type="number" name="jumlah" id="input_jumlah" value="1" min="1" oninput="hitungTotal()" required class="w-full border-gray-200 rounded-xl shadow-sm focus:border-cyan-500 focus:ring-cyan-500 text-sm p-3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Jumlah Pesanan</label>
+                            <input type="number" id="jumlah_input" name="jumlah" value="1" min="1" required class="w-full rounded-lg border-gray-300 focus:border-cyan-500 focus:ring-cyan-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Total Harga</label>
-                            <div id="tampilan_total" class="w-full bg-cyan-50 border border-cyan-100 rounded-xl text-blue-700 font-extrabold text-sm p-3">
-                                Rp {{ number_format(request('harga', 0), 0, ',', '.') }}
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Punya Kode Promo?</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="kode_promo" placeholder="Masukkan kode" class="w-full rounded-lg border-gray-300 focus:border-cyan-500 focus:ring-cyan-500 uppercase font-mono">
+                                <button type="button" id="btn_cek_promo" class="bg-blue-800 text-white font-bold px-4 py-2 rounded-lg hover:bg-blue-900 transition">Klaim</button>
                             </div>
+                            <p id="pesan_promo" class="text-xs mt-1 font-semibold hidden"></p>
+                        </div>
+                    </div>
+
+                    <!-- Ringkasan Biaya -->
+                    <div class="bg-sky-50 rounded-lg p-4 border border-cyan-100 mb-6">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-600">Subtotal</span>
+                            <span class="text-sm font-bold text-gray-800" id="tampil_subtotal">Rp {{ number_format(request('harga', 0), 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center mb-2 text-green-600 hidden" id="baris_diskon">
+                            <span class="text-sm">Diskon Promo (<span id="teks_persen">0</span>%)</span>
+                            <span class="text-sm font-bold" id="tampil_potongan">- Rp 0</span>
+                        </div>
+                        <hr class="border-cyan-200 my-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-base font-bold text-blue-900">Total Pembayaran</span>
+                            <span class="text-xl font-black text-blue-900" id="tampil_total">Rp {{ number_format(request('harga', 0), 0, ',', '.') }}</span>
                         </div>
                     </div>
 
@@ -137,16 +157,92 @@
         </div>
     </div>
 
+    <!-- SCRIPT PENGHITUNG DINAMIS -->
     <script>
-        function hitungTotal() {
-            const hargaSatuan = parseInt(document.getElementById('harga_satuan').value) || 0;
-            const jumlah = parseInt(document.getElementById('input_jumlah').value) || 0;
-            const tampilan = document.getElementById('tampilan_total');
-            const hiddenTotal = document.getElementById('input_total_harga');
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const hargaSatuan = parseInt(urlParams.get('harga')) || 0;
+            
+            let jumlah = 1;
+            let diskonPersen = 0;
 
-            const total = jumlah > 0 ? hargaSatuan * jumlah : 0;
-            tampilan.textContent = 'Rp ' + total.toLocaleString('id-ID');
-            hiddenTotal.value = total;
-        }
+            const inputJumlah = document.getElementById('jumlah_input');
+            const btnCekPromo = document.getElementById('btn_cek_promo');
+            const inputKodePromo = document.getElementById('kode_promo');
+            const pesanPromo = document.getElementById('pesan_promo');
+            const totalHargaInput = document.getElementById('total_harga_input');
+            const kodePromoDipakaiInput = document.getElementById('kode_promo_dipakai'); // Variabel baru
+
+            function hitungTotal() {
+                jumlah = parseInt(inputJumlah.value) || 1;
+                if(jumlah < 1) jumlah = 1; 
+                
+                let subtotal = hargaSatuan * jumlah;
+                let nilaiDiskon = (subtotal * diskonPersen) / 100;
+                let totalAkhir = subtotal - nilaiDiskon;
+
+                document.getElementById('tampil_subtotal').innerText = 'Rp ' + subtotal.toLocaleString('id-ID');
+                document.getElementById('tampil_total').innerText = 'Rp ' + totalAkhir.toLocaleString('id-ID');
+                totalHargaInput.value = totalAkhir; 
+                
+                if (diskonPersen > 0) {
+                    document.getElementById('baris_diskon').classList.remove('hidden');
+                    document.getElementById('teks_persen').innerText = diskonPersen;
+                    document.getElementById('tampil_potongan').innerText = '- Rp ' + nilaiDiskon.toLocaleString('id-ID');
+                } else {
+                    document.getElementById('baris_diskon').classList.add('hidden');
+                }
+            }
+
+            hitungTotal();
+
+            inputJumlah.addEventListener('input', hitungTotal);
+
+            btnCekPromo.addEventListener('click', function() {
+                const kode = inputKodePromo.value.trim();
+                if(!kode) return;
+
+                btnCekPromo.innerText = 'Cek...';
+                
+                fetch("{{ route('cek.promo') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ kode_promo: kode })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    btnCekPromo.innerText = 'Klaim';
+                    pesanPromo.classList.remove('hidden');
+                    
+                    if(data.success) {
+                        diskonPersen = data.diskon_persen;
+                        pesanPromo.innerText = data.pesan;
+                        pesanPromo.classList.remove('text-red-500');
+                        pesanPromo.classList.add('text-green-600');
+                        inputKodePromo.readOnly = true; 
+                        btnCekPromo.classList.add('hidden');
+                        
+                        // SET KODE PROMO KE DALAM INPUT HIDDEN UNTUK DIKIRIM KE DATABASE
+                        kodePromoDipakaiInput.value = kode; 
+                    } else {
+                        diskonPersen = 0;
+                        pesanPromo.innerText = data.pesan;
+                        pesanPromo.classList.remove('text-green-600');
+                        pesanPromo.classList.add('text-red-500');
+                        
+                        // KOSONGKAN JIKA GAGAL
+                        kodePromoDipakaiInput.value = ""; 
+                    }
+                    hitungTotal();
+                })
+                .catch(error => {
+                    btnCekPromo.innerText = 'Klaim';
+                    console.error('Error:', error);
+                });
+            });
+        });
     </script>
 </x-app-layout>

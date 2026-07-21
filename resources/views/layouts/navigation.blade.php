@@ -39,6 +39,20 @@
                     🥘 Kuliner
                 </a>
 
+                <!-- ================= TAMBAHAN MENU ADMIN ================= -->
+                <a href="{{ route('promo.index') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all {{ request()->routeIs('promo.*') ? 'bg-white text-blue-800 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
+                    🎁 Kelola Promo
+                </a>
+
+                <a href="{{ route('galeri.index') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all {{ request()->routeIs('galeri.*') ? 'bg-white text-blue-800 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
+                    🖼️ Galeri Wisata
+                </a>
+
+                <a href="{{ route('faq.index') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all {{ request()->routeIs('faq.*') ? 'bg-white text-blue-800 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
+                    ❓ Kelola FAQ
+                </a>
+                <!-- ======================================================= -->
+
                 <a href="{{ route('admin.ulasan.index') }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all {{ request()->routeIs('admin.ulasan.*') ? 'bg-white text-blue-800 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
                     ⭐ Data Ulasan
                 </a>
@@ -100,7 +114,7 @@
                         </a>
                     </div>
 
-                    <!-- Link Menu Pengunjung -->
+                    <!-- Link Menu Pengunjung (Desktop) -->
                     <div class="hidden space-x-1 sm:-my-px sm:ms-6 sm:flex sm:items-center">
                         <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('dashboard') ? 'bg-white text-blue-700 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
                             Beranda
@@ -111,6 +125,19 @@
                         <a href="{{ route('user.kuliner') }}" class="px-4 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('user.kuliner') ? 'bg-white text-blue-700 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
                             Kuliner
                         </a>
+                        
+                        <!-- ================= TAMBAHAN MENU USER ================= -->
+                        <a href="{{ route('user.promo') }}" class="px-4 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('user.promo') ? 'bg-white text-blue-700 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
+                            Promo Spesial
+                        </a>
+                        <a href="{{ route('user.galeri') }}" class="px-4 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('user.galeri') ? 'bg-white text-blue-700 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
+                            Galeri
+                        </a>
+                        <a href="{{ route('user.faq') }}" class="px-4 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('user.faq') ? 'bg-white text-blue-700 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
+                            FAQ
+                        </a>
+                        <!-- ==================================================== -->
+
                         <a href="{{ route('user.riwayat') }}" class="px-4 py-2 rounded-full text-sm font-bold transition-all {{ request()->routeIs('user.riwayat') ? 'bg-white text-blue-700 shadow-md' : 'text-cyan-50 hover:bg-white/10' }}">
                             Pesanan Saya
                         </a>
@@ -170,6 +197,13 @@
                 <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('dashboard') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">Beranda</a>
                 <a href="{{ route('user.fasilitas') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('user.fasilitas') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">Fasilitas Pantai</a>
                 <a href="{{ route('user.kuliner') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('user.kuliner') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">Kuliner</a>
+                
+                <!-- ================= TAMBAHAN MENU USER (MOBILE) ================= -->
+                <a href="{{ route('user.promo') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('user.promo') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">Promo Spesial</a>
+                <a href="{{ route('user.galeri') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('user.galeri') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">Galeri</a>
+                <a href="{{ route('user.faq') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('user.faq') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">FAQ</a>
+                <!-- ============================================================= -->
+                
                 <a href="{{ route('user.riwayat') }}" class="block px-4 py-2 rounded-lg text-sm font-bold {{ request()->routeIs('user.riwayat') ? 'bg-white text-blue-700' : 'text-cyan-50 hover:bg-white/10' }}">Pesanan Saya</a>
             </div>
 
